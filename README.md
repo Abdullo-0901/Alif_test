@@ -1,1 +1,2 @@
-# Alif-Test
+# npm i
+# npm run dev
