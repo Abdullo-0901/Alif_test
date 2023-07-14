@@ -28,11 +28,13 @@ import {
   setQ,
   setSurname,
 } from "./reducers/todos";
+import InfoModal from "./components/InfoModal";
+import DeleteItem from "./components/DeleteItem";
 function App() {
   const dispatch = useDispatch();
   const todos = useSelector(({ todos }) => todos.list);
   const addModal = useSelector(({ todos }) => todos.addModal);
-  
+
   const delModal = useSelector(({ todos }) => todos.delModal);
   const infoModal = useSelector(({ todos }) => todos.infoModal);
   const name = useSelector(({ todos }) => todos.name);
@@ -65,13 +67,6 @@ function App() {
     dispatch(getTodos());
   }, [dispatch]);
   if (loading) return <div>Loading...</div>;
- 
- 
-  const handleFileInputEdit = (event) => {
-    const file = event.target.files[0];
-    setEditFromUser(true);
-  };
-
   return (
     <div>
       <Table
@@ -117,57 +112,21 @@ function App() {
           />
         </div>
       }
-   <AddUser addModal ={addModal} name={name} surname={surname}age={age}email={email}phone={phone}job={job}city={city} adress={adress} />
-      
-     <Edit editUser={editUser} />
-      {infoModal && (
-        <Dialog
-          title="infoModal"
-          handleClose={() =>
-            dispatch(handleOpenCloseModals({ name: "infoModal", value: false }))
-          }
-          onClick={() =>
-            dispatch(handleOpenCloseModals({ name: "infoModal", value: false }))
-          }
-        >
-          <div className="flex flex-col items-center">
-            {Object.keys(items)
-              .slice(1)
-              .map((elem) => {
-                if (elem === "img") {
-                  return <img src={items[elem]} alt="" className="" />;
-                }
-                if (elem === "id") {
-                  return <></>;
-                }
-                return (
-                  <div className="flex flex-col gap-y-2">
-                    <div className="flex gap-4 justify-start w-[216px]">
-                      <h2 className="text-start font-bold text-black text-[18px]">
-                        {elem}:
-                      </h2>
-                      <h2>{items[elem]}</h2>
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </Dialog>
-      )}
-      {delModal && (
-        <Dialog
-          title="Delete Modal"
-          handleClose={() =>
-            dispatch(handleOpenCloseModals({ name: "delModal", value: false }))
-          }
-          onClick={() => {
-            dispatch(deleteTodos(del));
-            dispatch(handleOpenCloseModals({ name: "delModal", value: false }));
-          }}
-        >
-          {<h2>Are you sure you want to delete this student?</h2>}
-        </Dialog>
-      )}
+      <AddUser
+        addModal={addModal}
+        name={name}
+        surname={surname}
+        age={age}
+        email={email}
+        phone={phone}
+        job={job}
+        city={city}
+        adress={adress}
+      />
+
+      <Edit editUser={editUser} />
+      <InfoModal items={items} infoModal={infoModal} />
+      <DeleteItem delModal={delModal} del={del} />
     </div>
   );
 }
