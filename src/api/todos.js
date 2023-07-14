@@ -15,7 +15,7 @@ export const postTodos = createAsyncThunk(
   "todos/postTodos",
   async (obj, { rejectWithValue, dispatch }) => {
     const base64Image = await getBase64(obj.img);
-    console.log(base64Image);
+  
     try {
 
 

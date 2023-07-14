@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
-import { deleteTodos, editTodo, getTodos, postTodos } from "./api/todos";
+import { deleteTodos, getTodos } from "./api/todos";
+import AddUser from "./components/AddUser";
 import Dialog from "./components/Dialog";
+import Edit from "./components/Edit";
 import Table from "./components/Table";
 import {
   handleOpenCloseModals,
@@ -30,7 +32,7 @@ function App() {
   const dispatch = useDispatch();
   const todos = useSelector(({ todos }) => todos.list);
   const addModal = useSelector(({ todos }) => todos.addModal);
-  const editModal = useSelector(({ todos }) => todos.editModal);
+  
   const delModal = useSelector(({ todos }) => todos.delModal);
   const infoModal = useSelector(({ todos }) => todos.infoModal);
   const name = useSelector(({ todos }) => todos.name);
@@ -43,29 +45,9 @@ function App() {
   const city = useSelector(({ todos }) => todos.city);
   const adress = useSelector(({ todos }) => todos.adress);
   const loading = useSelector(({ todos }) => todos.loading);
-  const editName = useSelector(({ todos }) => todos.editName);
-  const editSurname = useSelector(({ todos }) => todos.editSurname);
-  const editAge = useSelector(({ todos }) => todos.editAge);
-  const editImg = useSelector(({ todos }) => todos.editImg);
   const q = useSelector(({ todos }) => todos.q);
-  const editEmail = useSelector(({ todos }) => todos.editEmail);
-
-  const editPhone = useSelector(({ todos }) => todos.editPhone);
-  const editJob = useSelector(({ todos }) => todos.editJob);
-  const editCity = useSelector(({ todos }) => todos.editCity);
-  const editAdrecc = useSelector(({ todos }) => todos.editAdrecc);
   const [items, setItems] = useState([]);
   const [del, setDel] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [editFromUser, setEditFromUser] = useState(false);
-
-  const handleFileInputChange = (event) => {
-    setSelectedImage(event.target.files[0]);
-  };
-  useEffect(() => {
-    dispatch(getTodos());
-  }, [dispatch]);
-  if (loading) return <div>Loading...</div>;
   function editUser(el) {
     dispatch(handleOpenCloseModals({ name: "editModal", value: true }));
     dispatch(setEditName(el.name));
@@ -79,20 +61,12 @@ function App() {
     dispatch(setEditImg(el.img));
     dispatch(setIdx(el.id));
   }
-  async function addUzer(values) {
-    let category = { ...values };
-
-    dispatch(postTodos(category));
-  }
-
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
+  useEffect(() => {
+    dispatch(getTodos());
+  }, [dispatch]);
+  if (loading) return <div>Loading...</div>;
+ 
+ 
   const handleFileInputEdit = (event) => {
     const file = event.target.files[0];
     setEditFromUser(true);
@@ -143,256 +117,9 @@ function App() {
           />
         </div>
       }
-      {addModal && (
-        <Dialog
-          title="addModal"
-          handleClose={() =>
-            dispatch(handleOpenCloseModals({ name: "addModal", value: false }))
-          }
-          onClick={
-            () => {
-              (name == "", surname == "")
-                ? alert("Please fill the input")
-                : addUzer({
-                    img: selectedImage,
-                    name: name,
-                    age: age,
-                    phone: phone,
-                    email: email,
-                    job: job,
-                    adress: adress,
-                    city: city,
-                    surname: surname,
-                  });
-            }
-            // dispatch(
-            //   postTodos()
-            // )
-          }
-        >
-          {
-            <div className="flex flex-col">
-              <label htmlFor="email">Img</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileInputChange}
-              />
-              <label htmlFor="email">Name</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={name}
-                onChange={(e) => {
-                  dispatch(setName(e.target.value));
-                }}
-              />
-
-              <label htmlFor="surname">Surname</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={surname}
-                onChange={(e) => {
-                  dispatch(setSurname(e.target.value));
-                }}
-              />
-              <label htmlFor="email">Email</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={email}
-                onChange={(e) => {
-                  dispatch(setEmail(e.target.value));
-                }}
-              />
-              <label htmlFor="age">Age</label>
-              <input
-                required
-                type="number"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={age}
-                onChange={(e) => {
-                  dispatch(setAge(e.target.value));
-                }}
-              />
-              <label htmlFor="city">City</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={city}
-                onChange={(e) => {
-                  dispatch(setCity(e.target.value));
-                }}
-              />
-              <label htmlFor="city">Adress</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={adress}
-                onChange={(e) => {
-                  dispatch(setAdres(e.target.value));
-                }}
-              />
-              <label htmlFor="email">Phone</label>
-              <input
-                required
-                type="number"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={phone}
-                onChange={(e) => {
-                  dispatch(setPhone(e.target.value));
-                }}
-              />
-              <label htmlFor="job">Job</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={job}
-                onChange={(e) => {
-                  dispatch(setJob(e.target.value));
-                }}
-              />
-            </div>
-          }
-        </Dialog>
-      )}
+   <AddUser addModal ={addModal} name={name} surname={surname}age={age}email={email}phone={phone}job={job}city={city} adress={adress} />
       
-      {editModal && (
-        <Dialog
-          title="EditModal"
-          handleClose={() =>
-            dispatch(handleOpenCloseModals({ name: "editModal", value: false }))
-          }
-          onClick={() => {
-            let obj = {
-              img: editImg,
-              name: editName,
-              surname: editSurname,
-              email: editEmail,
-              phone: editPhone,
-              age: editAge,
-              job: editJob,
-              city: editCity,
-              adress: editAdrecc,
-            };
-            dispatch(
-              editTodo({
-                idx,
-                obj,
-              })
-            );
-            dispatch(
-              handleOpenCloseModals({ name: "editModal", value: false })
-            );
-          }}
-        >
-          {
-            <div className="flex flex-col">
-              <label htmlFor="email">Img</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileInputEdit}
-              />
-              <label htmlFor="email">Name</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editName}
-                name="name"
-                onChange={(e) => {
-                  dispatch(setEditName(e.target.value));
-                }}
-              />
-              <label htmlFor="surname">Surname</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editSurname}
-                name="surname"
-                onChange={(e) => {
-                  dispatch(setEditSurname(e.target.value));
-                }}
-              />
-              <label htmlFor="email">Email</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editEmail}
-                name="email"
-                onChange={(e) => {
-                  dispatch(setEditEmail(e.target.value));
-                }}
-              />
-              <label htmlFor="age">Age</label>
-              <input
-                required
-                type="number"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editAge}
-                name="age"
-                onChange={(e) => {
-                  dispatch(setEditAge(e.target.value));
-                }}
-              />
-              <label htmlFor="city">City</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editCity}
-                name="city"
-                onChange={(e) => {
-                  dispatch(setEditCity(e.target.value));
-                }}
-              />
-              <label htmlFor="city">Adress</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editAdrecc}
-                name="adress"
-                onChange={(e) => {
-                  dispatch(setEditAdres(e.target.value));
-                }}
-              />
-              <label htmlFor="email">Phone</label>
-              <input
-                required
-                type="number"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editPhone}
-                name="phone"
-                onChange={(e) => {
-                  dispatch(setEditPhone(e.target.value));
-                }}
-              />
-              <label htmlFor="job">Job</label>
-              <input
-                required
-                type="text"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
-                value={editJob}
-                name="job"
-                onChange={(e) => {
-                  dispatch(setEditJob(e.target.value));
-                }}
-              />
-            </div>
-          }
-        </Dialog>
-      )}
+     <Edit editUser={editUser} />
       {infoModal && (
         <Dialog
           title="infoModal"
