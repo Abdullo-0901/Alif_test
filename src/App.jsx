@@ -4,7 +4,6 @@ import "./App.css";
 import { deleteTodos, editTodo, getTodos, postTodos } from "./api/todos";
 import Dialog from "./components/Dialog";
 import Table from "./components/Table";
-import { singleFile } from "./api/file";
 import {
   handleOpenCloseModals,
   setAdres,
@@ -14,6 +13,7 @@ import {
   setEditAge,
   setEditCity,
   setEditEmail,
+  setEditImg,
   setEditJob,
   setEditName,
   setEditPhone,
@@ -46,6 +46,7 @@ function App() {
   const editName = useSelector(({ todos }) => todos.editName);
   const editSurname = useSelector(({ todos }) => todos.editSurname);
   const editAge = useSelector(({ todos }) => todos.editAge);
+  const editImg = useSelector(({ todos }) => todos.editImg);
   const q = useSelector(({ todos }) => todos.q);
   const editEmail = useSelector(({ todos }) => todos.editEmail);
 
@@ -56,6 +57,7 @@ function App() {
   const [items, setItems] = useState([]);
   const [del, setDel] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [editFromUser, setEditFromUser] = useState(false);
 
   const handleFileInputChange = (event) => {
     setSelectedImage(event.target.files[0]);
@@ -74,6 +76,7 @@ function App() {
     dispatch(setEditAdres(el.adress));
     dispatch(setEditJob(el.job));
     dispatch(setEditPhone(el.phone));
+    dispatch(setEditImg(el.img));
     dispatch(setIdx(el.id));
   }
   async function addUzer(values) {
@@ -81,8 +84,6 @@ function App() {
 
     dispatch(postTodos(category));
   }
-
-
 
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -92,8 +93,11 @@ function App() {
       reader.onerror = (error) => reject(error);
     });
   };
+  const handleFileInputEdit = (event) => {
+    const file = event.target.files[0];
+    setEditFromUser(true);
+  };
 
-  
   return (
     <div>
       <Table
@@ -259,6 +263,7 @@ function App() {
           }
         </Dialog>
       )}
+      
       {editModal && (
         <Dialog
           title="EditModal"
@@ -267,7 +272,7 @@ function App() {
           }
           onClick={() => {
             let obj = {
-
+              img: editImg,
               name: editName,
               surname: editSurname,
               email: editEmail,
@@ -292,9 +297,9 @@ function App() {
             <div className="flex flex-col">
               <label htmlFor="email">Img</label>
               <input
-                required
                 type="file"
-                className="border inline-block border-black w-[300px] p-[2px_5px]"
+                accept="image/*"
+                onChange={handleFileInputEdit}
               />
               <label htmlFor="email">Name</label>
               <input

@@ -36,6 +36,7 @@ export const slice = createSlice({
     editCity: "",
     editAdrecc: "",
     idx :null,
+    editImg:"",
     q:""
   },
   reducers: {
@@ -101,6 +102,9 @@ export const slice = createSlice({
     setEditAdres(state, action) {
       state.editAdrecc = action.payload;
     },
+    setEditImg(state,action){
+      state.editImg= action.payload
+    },
     setQ(state,action){
       state.q = action.payload
     }
@@ -147,6 +151,8 @@ export const {
   setSurname,
   setEditName,
   setEditAdres,
+  setEditImg,
+
   setEditAge,
   setEditCity,
   setEditEmail,
