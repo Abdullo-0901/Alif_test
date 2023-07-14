@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import todos from "../reducers/todos";
 
 let axiosRequest = axios.create({
   baseURL: "http://localhost:3000/",
@@ -15,9 +14,13 @@ export const getTodos = createAsyncThunk("todos/getTodos", async () => {
 export const postTodos = createAsyncThunk(
   "todos/postTodos",
   async (obj, { rejectWithValue, dispatch }) => {
+    const base64Image = await getBase64(obj.img);
+    console.log(base64Image);
     try {
+
+
       const student = {
-        img:obj.img,
+        img:base64Image,
         name: obj.name,
         surname: obj.surname,
         age: obj.age,
@@ -62,18 +65,6 @@ export const deleteTodos = createAsyncThunk(
     }
   }
 );
-export const patchTodos = createAsyncThunk(
-  "todos/patchTodos",
-  async (id, { dispatch, getState }) => {
-    const todo = { ...getState().todos.list.find((elem) => elem.id === id) };
-    console.log(todo);
-    todo.completed = !todo.completed;
-    try {
-      const { data } = await axiosRequest.patch(`todos/${id}`, todo);
-      dispatch(getTodos());
-    } catch (error) {}
-  }
-);
 export const editTodo = createAsyncThunk(
   "todos/editTodo",
   async function ({ idx, obj }, { dispatch }) {
@@ -84,3 +75,11 @@ export const editTodo = createAsyncThunk(
     } catch (error) {}
   }
 );
+const getBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};

@@ -55,8 +55,11 @@ function App() {
   const editAdrecc = useSelector(({ todos }) => todos.editAdrecc);
   const [items, setItems] = useState([]);
   const [del, setDel] = useState(null);
-  const [img, setImg] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  const handleFileInputChange = (event) => {
+    setSelectedImage(event.target.files[0]);
+  };
   useEffect(() => {
     dispatch(getTodos());
   }, [dispatch]);
@@ -75,13 +78,22 @@ function App() {
   }
   async function addUzer(values) {
     let category = { ...values };
-    let formData = new FormData();
-    formData.append("file", img);
-    const file = await singleFile(formData);
-    console.log(file);
-    category.media = file.img;
+
     dispatch(postTodos(category));
   }
+
+
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  
   return (
     <div>
       <Table
@@ -138,7 +150,7 @@ function App() {
               (name == "", surname == "")
                 ? alert("Please fill the input")
                 : addUzer({
-                    img: img,
+                    img: selectedImage,
                     name: name,
                     age: age,
                     phone: phone,
@@ -158,12 +170,9 @@ function App() {
             <div className="flex flex-col">
               <label htmlFor="email">Img</label>
               <input
-                required
                 type="file"
-                name="img"
-                onChange={(event) => {
-                  setImg(event.target.files[0]);
-                }}
+                accept="image/*"
+                onChange={handleFileInputChange}
               />
               <label htmlFor="email">Name</label>
               <input
@@ -258,6 +267,7 @@ function App() {
           }
           onClick={() => {
             let obj = {
+
               name: editName,
               surname: editSurname,
               email: editEmail,

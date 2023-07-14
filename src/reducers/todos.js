@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getTodos, patchTodos, postTodos, deleteTodos,editTodo} from "../api/todos";
+import { createSlice } from "@reduxjs/toolkit";
+import { deleteTodos, getTodos,postTodos } from "../api/todos";
 
 const setLoading = (state) => {
   state.loading = true;
@@ -126,12 +126,6 @@ export const slice = createSlice({
       state.editModal = false
     });
     builder.addCase(deleteTodos.rejected, setError);
-    builder.addCase(patchTodos.pending, setLoading);
-    builder.addCase(patchTodos.fulfilled, (state) => {
-      state.loading = false;
-      state.editModal = false
-    });
-    builder.addCase(patchTodos.rejected, setError);
   },
 });
 
